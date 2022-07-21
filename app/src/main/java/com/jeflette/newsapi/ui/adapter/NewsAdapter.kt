@@ -1,18 +1,23 @@
 package com.jeflette.newsapi.ui.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.jeflette.newsapi.R
-import com.jeflette.newsapi.data.local.entity.Articles
+import com.jeflette.newsapi.data.entity.News
+import com.jeflette.newsapi.data.remote.response.Articles
 import com.jeflette.newsapi.databinding.NewsItemBinding
+import com.jeflette.newsapi.ui.llistnews.ListFragmentDirections
+import com.jeflette.newsapi.util.withDateFormat
+import jp.wasabeef.glide.transformations.BlurTransformation
 
-class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
+class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     private val results: MutableList<Articles> = ArrayList()
     fun setList(result: List<Articles>) {
@@ -21,30 +26,39 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val bind = NewsItemBinding.bind(itemView)
+    inner class ViewHolder(private val binding: NewsItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun binding(news: Articles) {
-            bind.newsTitle.text = news.title
-            bind.newsSource.text = news.source?.name ?: ""
-            bind.newsDate.text = news.publishedAt
+            binding.newsTitle.text = news.title
+            binding.newsSource.text = news.source?.name
+            binding.newsDate.text = news.publishedAt?.withDateFormat()
             Glide.with(itemView.context)
                 .load(news.urlToImage)
-                .into(bind.newsImage)
+                .apply(bitmapTransform(BlurTransformation(5, 2)))
+                .into(binding.newsImage)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.news_item, parent, false)
-        return ViewHolder(view)
+        val binding = NewsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding(results[position])
-
-        holder.itemView.setOnClickListener{
-            // Find nav
+        holder.itemView.setOnClickListener {
+            val action =
+                ListFragmentDirections.actionListFragmentToDetailFragment(results[position])
+            findNavController(it).navigate(action)
         }
     }
 
     override fun getItemCount(): Int = results.size
+
+    class NewsComparator : DiffUtil.ItemCallback<News>() {
+        override fun areItemsTheSame(oldItem: News, newItem: News): Boolean =
+            oldItem.title == newItem.title
+
+        override fun areContentsTheSame(oldItem: News, newItem: News): Boolean = oldItem == newItem
+    }
 }
