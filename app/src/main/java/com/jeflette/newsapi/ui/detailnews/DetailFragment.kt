@@ -27,8 +27,6 @@ class DetailFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Glide.with(this).load(args.news.urlToImage).into(binding.detailImage)
-        binding.detailTitle.text = args.news.title
-        binding.detailDescription.text = args.news.content
+        args.news.url?.let { binding.webViewNews.loadUrl(it) }
     }
 }
