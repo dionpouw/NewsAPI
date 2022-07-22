@@ -25,8 +25,10 @@ class DetailFragment : Fragment() {
         return binding.root
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        binding.webViewNews.settings.javaScriptEnabled = true
         args.news.url?.let { binding.webViewNews.loadUrl(it) }
     }
 }
