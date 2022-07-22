@@ -31,22 +31,31 @@ class ListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.getNews()
         val newsAdapter = NewsAdapter()
         binding.rvNews.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
         }
-
-        viewModel.news.observe(viewLifecycleOwner) {
-            newsAdapter.setList(it.articles as List<Articles>)
+        viewModel.getNews()
+        viewModel.apply {
+            isLoading.observe(viewLifecycleOwner) {
+                if (it) {
+                    binding.progressBar.visibility = View.VISIBLE
+                } else {
+                    binding.progressBar.visibility = View.GONE
+                }
+            }
+            news.observe(viewLifecycleOwner) {
+                binding.rvNews.visibility = View.VISIBLE
+                newsAdapter.setList(it?.articles as List<Articles>)
+            }
         }
-        // TODO: Use the ViewModel
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDetach() {
+        super.onDetach()
         _binding = null
     }
 }
