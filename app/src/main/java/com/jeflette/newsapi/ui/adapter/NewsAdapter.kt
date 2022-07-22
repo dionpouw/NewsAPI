@@ -2,9 +2,7 @@ package com.jeflette.newsapi.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -29,12 +27,13 @@ class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: NewsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun binding(news: Articles) {
-            binding.newsTitle.text = news.title
-            binding.newsSource.text = news.source?.name
-            binding.newsDate.text = news.publishedAt?.withDateFormat()
+            binding.newsTitle.text = news.title ?: ""
+            binding.newsSource.text = news.source?.name ?: ""
+            binding.newsDate.text = news.publishedAt?.withDateFormat() ?: ""
             Glide.with(itemView.context)
                 .load(news.urlToImage)
                 .apply(bitmapTransform(BlurTransformation(5, 2)))
+                .error(R.drawable.ic_launcher_background)
                 .into(binding.newsImage)
         }
     }
