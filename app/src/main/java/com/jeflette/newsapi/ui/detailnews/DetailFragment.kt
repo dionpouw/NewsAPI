@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebChromeClient
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
-import com.jeflette.newsapi.R
 import com.jeflette.newsapi.databinding.FragmentDetailBinding
-import com.jeflette.newsapi.databinding.FragmentListBinding
 
 class DetailFragment : Fragment() {
 
@@ -28,7 +26,22 @@ class DetailFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        binding.webViewNews.settings.javaScriptEnabled = true
-        args.news.url?.let { binding.webViewNews.loadUrl(it) }
+        binding.webViewNews.apply {
+            clearCache(true)
+            webChromeClient = WebChromeClient()
+            settings.apply {
+                javaScriptEnabled = true
+                useWideViewPort = true
+                domStorageEnabled = true
+            }
+            args.news.url?.let {
+                loadUrl(it)
+            }
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        _binding = null
     }
 }
