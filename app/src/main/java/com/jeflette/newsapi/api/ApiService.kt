@@ -9,5 +9,11 @@ interface ApiService {
     suspend fun getNews(
         @Query("country") query: String ,
         @Query("apiKey") apiKey: String
-    ): NewsResponse
+    ): NewsResponse?
+
+    @GET("everything")
+    suspend fun getNewsSearch(
+        @Query("q") query: String ,
+        @Query("apiKey") apiKey: String
+    ): NewsResponse?
 }
