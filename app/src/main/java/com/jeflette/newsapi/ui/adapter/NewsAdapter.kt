@@ -6,21 +6,21 @@ import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.jeflette.newsapi.R
 import com.jeflette.newsapi.data.entity.News
 import com.jeflette.newsapi.data.remote.response.Articles
 import com.jeflette.newsapi.databinding.NewsItemBinding
 import com.jeflette.newsapi.ui.llistnews.ListFragmentDirections
 import com.jeflette.newsapi.util.withDateFormat
-import jp.wasabeef.glide.transformations.BlurTransformation
 
 class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
-    private val results: MutableList<Articles> = ArrayList()
-    fun setList(result: List<Articles>) {
-        results.clear()
-        results.addAll(result)
+    private val results: MutableList<Articles?>? = ArrayList()
+    fun setList(result: List<Articles?>?) {
+        results?.clear()
+        if (result != null) {
+            results?.addAll(result)
+        }
         notifyDataSetChanged()
     }
 
@@ -32,7 +32,6 @@ class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
             binding.newsDate.text = news.publishedAt?.withDateFormat() ?: ""
             Glide.with(itemView.context)
                 .load(news.urlToImage)
-                .apply(bitmapTransform(BlurTransformation(5, 2)))
                 .error(R.drawable.ic_launcher_background)
                 .into(binding.newsImage)
         }
@@ -44,15 +43,17 @@ class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding(results[position])
+        results?.get(position)?.let { holder.binding(it) }
         holder.itemView.setOnClickListener {
             val action =
-                ListFragmentDirections.actionListFragmentToDetailFragment(results[position])
+                ListFragmentDirections.actionListFragmentToDetailFragment(
+                    results?.get(position) ?: Articles()
+                )
             findNavController(it).navigate(action)
         }
     }
 
-    override fun getItemCount(): Int = results.size
+    override fun getItemCount(): Int = results?.size ?: 0
 
     class NewsComparator : DiffUtil.ItemCallback<News>() {
         override fun areItemsTheSame(oldItem: News, newItem: News): Boolean =
