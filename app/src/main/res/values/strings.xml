@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">NewsAPI</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="newsImage">NewsImage</string>
+    <string name="news">NEWS</string>
+    <string name="news_bottom">News</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="search">Search</string>
+    <string name="no_internet_connection">No Internet Connection</string>
 </resources>

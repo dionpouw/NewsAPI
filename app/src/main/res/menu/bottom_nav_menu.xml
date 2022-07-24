@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/listFragment"
+        android:icon="@drawable/ic_baseline_news_24"
+        android:title="@string/news_bottom" />
+    <item
+        android:id="@+id/bookmarkFragment"
+        android:icon="@drawable/ic_baseline_bookmark_24"
+        android:title="@string/bookmark" />
+</menu>
