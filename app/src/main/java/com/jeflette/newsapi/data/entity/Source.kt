@@ -1,4 +1,4 @@
-package com.jeflette.newsapi.data.local.entity
+package com.jeflette.newsapi.data.entity
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
