@@ -11,8 +11,12 @@
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail">
         <argument
-            android:name="news"
-            app:argType="com.jeflette.newsapi.data.remote.response.Articles" />
+            android:name="Articles"
+            app:argType="com.jeflette.newsapi.data.entity.Articles"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_detailFragment_to_listFragment"
+            app:destination="@id/listFragment" />
     </fragment>
     <fragment
         android:id="@+id/listFragment"
