@@ -1,32 +1,55 @@
 package com.jeflette.newsapi.ui.bookmark
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.jeflette.newsapi.R
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.jeflette.newsapi.databinding.FragmentBookmarkBinding
+import com.jeflette.newsapi.ui.adapter.NewsAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BookmarkFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = BookmarkFragment()
-    }
-
-    private lateinit var viewModel: BookmarkViewModel
+    private val viewModel: BookmarkViewModel by viewModels()
+    private var _binding: FragmentBookmarkBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_bookmark, container, false)
+        _binding = FragmentBookmarkBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(BookmarkViewModel::class.java)
-        // TODO: Use the ViewModel
+
+        val newsAdapter = NewsAdapter()
+
+        binding.apply {
+            rvBookmarked.apply {
+                adapter = newsAdapter
+                layoutManager = LinearLayoutManager(context)
+            }
+            viewModel.apply {
+                getBookmarkNews()
+                bookmarkedNews.observe(viewLifecycleOwner) { article ->
+                    newsAdapter.setList(article.sortedByDescending { it.publishedAt })
+                    tvEmpty.isVisible = article.isEmpty()
+                }
+            }
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        _binding = null
     }
 
 }
