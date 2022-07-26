@@ -1,22 +1,25 @@
 package com.jeflette.newsapi.ui.llistnews
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jeflette.newsapi.data.entity.Articles
 import com.jeflette.newsapi.databinding.FragmentListBinding
 import com.jeflette.newsapi.ui.adapter.NewsAdapter
-import com.jeflette.newsapi.viewmodel.MainViewModel
+import com.jeflette.newsapi.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ListFragment : Fragment() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: ListViewModel by viewModels()
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
 
@@ -40,7 +43,7 @@ class ListFragment : Fragment() {
                     getSearchNews(query!!)
                     news.observe(viewLifecycleOwner) { news ->
                         val sorted = news?.articles?.sortedByDescending { it?.publishedAt }
-                        newsAdapter.setList(sorted)
+                        newsAdapter.setList(sorted as List<Articles>)
                     }
                 }
                 return true
@@ -51,25 +54,31 @@ class ListFragment : Fragment() {
             }
         })
 
-        binding.rvNews.apply {
-            adapter = newsAdapter
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(true)
-        }
-
-        viewModel.getNews()
-        viewModel.apply {
-            isLoading.observe(viewLifecycleOwner) {
-                if (it) {
-                    binding.progressBar.visibility = View.VISIBLE
-                } else {
-                    binding.progressBar.visibility = View.GONE
-                }
+        binding.apply {
+            rvNews.apply {
+                adapter = newsAdapter
+                layoutManager = LinearLayoutManager(context)
             }
+            viewModel.newsResponse.observe(viewLifecycleOwner) { news ->
+                when (news) {
+                    is Resource.Loading -> {
+                        progressBar.isVisible = true
+                    }
+                    is Resource.Success -> {
+                        progressBar.isVisible = false
+                        news.data?.sortedByDescending { it.publishedAt }
+                            ?.let { newsAdapter.setList(it) }
+                    }
+                    is Resource.Error -> {
+                        progressBar.isVisible = false
+                        Log.e("Error", news.error.toString())
+                    }
+                }
 
-            news.observe(viewLifecycleOwner) {
-                binding.rvNews.visibility = View.VISIBLE
-                newsAdapter.setList(it?.articles)
+                val sorted = news.data?.sortedByDescending { it.publishedAt }
+                sorted?.let { newsAdapter.setList(it) }
+                progressBar.isVisible = news is Resource.Loading && news.data.isNullOrEmpty()
+                tvEmpty.isVisible = news is Resource.Error && news.data.isNullOrEmpty()
             }
         }
     }
