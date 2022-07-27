@@ -41,6 +41,11 @@ class ListFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 viewModel.apply {
                     getSearchNews(query!!)
+                    isLoading.observe(viewLifecycleOwner) { loading ->
+                        if (loading) {
+                            binding.progressBar.isVisible = true
+                        }
+                    }
                     news.observe(viewLifecycleOwner) { news ->
                         val sorted = news?.articles?.sortedByDescending { it?.publishedAt }
                         newsAdapter.setList(sorted as List<Articles>)
