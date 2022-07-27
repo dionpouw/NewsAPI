@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import androidx.activity.OnBackPressedCallback
+import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -31,27 +31,13 @@ class DetailFragment : Fragment() {
 
     @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-
-        val callback = requireActivity()
-            .onBackPressedDispatcher
-            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    // Do custom work here
-
-                    // if you want onBackPressed() to be called as normal afterwards
-                    if (isEnabled) {
-                        isEnabled = false
-                        requireActivity().onBackPressed()
-                    }
-                }
-            }
-            )
-
         super.onActivityCreated(savedInstanceState)
+
+        val checkIfArgsHasBookmark = args.articles?.isBookmarked
         binding.apply {
             webViewNews.apply {
                 clearCache(true)
-                webChromeClient = WebChromeClient()
+                webViewClient = WebViewClient()
                 settings.apply {
                     javaScriptEnabled = true
                     useWideViewPort = true
@@ -61,17 +47,24 @@ class DetailFragment : Fragment() {
                     loadUrl(it)
                 }
             }
+
+            if (checkIfArgsHasBookmark == true) {
+                binding.fabAddBookmarked.visibility = View.INVISIBLE
+            } else {
+                binding.fabAddBookmarked.visibility = View.VISIBLE
+            }
+
             fabAddBookmarked.setOnClickListener {
-                args.articles?.let { article -> viewModel.updateArticles(article, true) }
+                args.articles?.let { article ->
+                    viewModel.updateArticles(article, true)
+                    Toast.makeText(context, "News is Bookmarked", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
-
 
     override fun onDetach() {
         super.onDetach()
         _binding = null
     }
-
-
 }
