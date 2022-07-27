@@ -14,9 +14,6 @@
             android:name="Articles"
             app:argType="com.jeflette.newsapi.data.entity.Articles"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_detailFragment_to_listFragment"
-            app:destination="@id/listFragment" />
     </fragment>
     <fragment
         android:id="@+id/listFragment"
@@ -32,7 +29,11 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_listFragment_to_bookmarkFragment"
-            app:destination="@id/bookmarkFragment" />
+            app:destination="@id/bookmarkFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/nav_default_pop_exit_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
@@ -55,6 +56,10 @@
         tools:layout="@layout/fragment_bookmark">
         <action
             android:id="@+id/action_bookmarkFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
+            app:destination="@id/detailFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 </navigation>
