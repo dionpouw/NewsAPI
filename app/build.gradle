@@ -67,12 +67,6 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
-    // Room - Paging 3 Integration
-    implementation "androidx.room:room-paging:$room_version"
-
-    // Paging 3
-    implementation "androidx.paging:paging-runtime-ktx:3.1.1"
-
     // Lifecycle KTX
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$ktx_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$ktx_version"
