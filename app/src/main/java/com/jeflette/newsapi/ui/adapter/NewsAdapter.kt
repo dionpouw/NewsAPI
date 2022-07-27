@@ -12,7 +12,7 @@ import com.jeflette.newsapi.ui.bookmark.BookmarkFragmentDirections
 import com.jeflette.newsapi.ui.llistnews.ListFragmentDirections
 import com.jeflette.newsapi.util.withDateFormat
 
-class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
+class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     private val results: MutableList<Articles> = ArrayList()
     fun setList(result: List<Articles>) {
@@ -24,12 +24,12 @@ class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: NewsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun binding(news: Articles) {
-            binding.newsTitle.text = news.title ?: ""
+            binding.newsTitle.text = news.title
             binding.newsSource.text = news.source?.name ?: ""
             binding.newsDate.text = news.publishedAt?.withDateFormat() ?: ""
             Glide.with(itemView.context)
                 .load(news.urlToImage)
-                .error(R.drawable.ic_launcher_background)
+                .error(R.color.black)
                 .into(binding.newsImage)
         }
     }
@@ -51,12 +51,18 @@ class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
                 BookmarkFragmentDirections.actionBookmarkFragmentToDetailFragment(
                     results[position]
                 )
-            findNavController(it).navigate(actionListFragmentToDetailFragment)
-            if (findNavController(it).currentDestination ==) {
-
+            findNavController(it).currentDestination?.id?.let { id ->
+                when (id) {
+                    R.id.listFragment -> findNavController(it).navigate(
+                        actionListFragmentToDetailFragment
+                    )
+                    R.id.bookmarkFragment -> findNavController(it).navigate(
+                        actionBookmarkFragmentToDetailFragment
+                    )
+                }
             }
         }
     }
 
-    override fun getItemCount(): Int = results.size ?: 0
+    override fun getItemCount(): Int = results.size
 }
