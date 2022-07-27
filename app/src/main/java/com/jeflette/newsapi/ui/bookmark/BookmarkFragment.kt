@@ -22,7 +22,7 @@ class BookmarkFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentBookmarkBinding.inflate(inflater, container, false)
         return binding.root
     }
